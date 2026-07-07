@@ -1,7 +1,7 @@
 import React from 'react'
-import './Home.css'
+import './Video.css'
 
-const Home = () => {
+const Video = () => {
   return (
     <div>
 
@@ -9,4 +9,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Video
