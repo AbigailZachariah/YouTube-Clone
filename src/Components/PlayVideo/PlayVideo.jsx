@@ -13,16 +13,35 @@ import moment from 'moment'
 const PlayVideo = ({videoId}) => {
 
   const [apiData,setApiData]=useState(null);
+  const [channelData,setChannelData]=useState(null);
+  const [commentData,setCommentData]=useState([])
 
   const fetchVideoData =async() =>{
     //Fetching videos data
     const videoDetails_url=`https://youtube.googleapis.com/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&id=${videoId}&key=${API_KEY}`;
-    await fetchVideoData(videoDetails_url).then(res=>res.json()).then(data=> setApiData(data.items[0]));
+    await fetch(videoDetails_url).then(res=>res.json()).then(data=> setApiData(data.items[0]));
+  }
+
+
+  const fetchOtherData =async()=>{
+    //Fetching Channel Data
+    const channelData_url=`https://youtube.googleapis.com/youtube/v3/channels?part=snippet%2CcontentDetails%2Cstatistics&id=${apiData.snippet.channelId}&key=${API_KEY}`;
+    //[0] to get the object
+    await fetch(channelData_url).then(res=>res.json()).then(data=>setChannelData(data.items[0]))  
+    
+    
+    //fetching comment data
+    const comment_url=`https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet%2Creplies&videoId=${videoId}&key=${API_KEY}`;
+    await fetch(comment_url)                   
   }
 
   useEffect(()=>{
     fetchVideoData();
-  },[])
+  },[]);
+
+  useEffect(()=>{
+    fetchOtherData();
+  },[apiData])
 
   return (
     <div className='play-video'>
@@ -34,25 +53,24 @@ const PlayVideo = ({videoId}) => {
         <p>{apiData?value_converter(apiData.statistics.viewCount):"16K"} Views &bull; {apiData?moment(apiData.snippet.publishedAt).fromNow():""}</p>
         <div>
           <span><img src={like} alt="" />{apiData?value_converter(apiData.statistics.likeCount):155}</span>
-          <span><img src={dislike} alt="" />2</span>
+          <span><img src={dislike} alt="" /></span>
           <span><img src={share} alt="" />Share</span>
           <span><img src={save} alt="" />Save</span>               
         </div>
       </div>
       <hr />
       < div className="publisher">
-        <img src={jack} alt="" />
+        <img src={channelData?channelData.snippet.thumbnails.default.url:""} alt="" />
         <div>
-          <p>GreatStack</p>
-          <span>1m Subscribers</span>
+          <p>{apiData?apiData.snippet.channelTitle:""}</p>
+          <span>{channelData?value_converter(channelData.statistics.subscriberCount):"1M"} Subscribers</span>
         </div>
          <button>Subscribe</button>
       </div>
       <div className="vid-description">
-        <p>Channel that makes learning easy</p>
-        <p>Subscribe to GreatStack to watch more tutorials on web development</p>
+        <p>{apiData?apiData.snippet.description.slice(0,250):"Description Here"}</p>
         <hr />
-        <h4>130 Comments</h4>
+        <h4>{apiData?value_converter(apiData.statistics.commentCount):102} Comments</h4>
         <div className="comment">
           <img src={user_profile} alt="" />
           <div>
