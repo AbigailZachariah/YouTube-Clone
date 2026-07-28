@@ -74,16 +74,17 @@ const PlayVideo = ({ videoId }) => {
         {commentData.map((item, index) => {
 
           return (
-            <div key ={index} className="comment">
+            <div key={index} className="comment">
               <img src={item.snippet.topLevelComment.snippet.authorProfileImageUrl} alt="" />
               <div>
                 <h3>{item.snippet.topLevelComment.snippet.authorDisplayName} <span>1 day ago</span></h3>
                 <p>{item.snippet.topLevelComment.snippet.textDisplay}</p>
-              </div>
-              <div className="comment-action">
-                <img src={like} alt="" />
-                <span>{value_converter(item.snippet.topLevelComment.snippet.likeCount)}</span>
-                <img src={dislike} alt="" />
+
+                <div className="comment-action">
+                  <img src={like} alt="" />
+                  <span>{value_converter(item.snippet.topLevelComment.snippet.likeCount)}</span>
+                  <img src={dislike} alt="" />
+                </div>
               </div>
             </div>
           )
